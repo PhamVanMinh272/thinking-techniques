@@ -333,17 +333,25 @@
   </main>
 
   <!-- Bootstrap JS -->
-  <script
-
-
+  <script>
     function addItem(listId, text) {
       if (!text) return;
+
       const li = document.createElement('li');
       li.className = 'list-group-item d-flex justify-content-between align-items-center';
-      li.innerHTML = ` <span>${escapeHtml(text)}</span> <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></button> `;
+
+      li.innerHTML = `
+        <span>${escapeHtml(text)}</span>
+        <button class="btn btn-sm btn-outline-danger">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      `;
+
       li.querySelector('button').addEventListener('click', () => li.remove());
+
       document.getElementById(listId).appendChild(li);
     }
+
 
     function escapeHtml(str) {
       const p = document.createElement('p');
