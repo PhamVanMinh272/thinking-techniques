@@ -1,0 +1,435 @@
+
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🧠 Brain Externalization Template</title>
+
+  <!-- Bootstrap 5.3+ CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- Bootstrap Icons CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+   -------- Core Styles ---------- */
+    :root {
+      --section-gap: 1.25rem;
+      --muted: #6c757d;
+    }
+    body {
+      background: var(--bs-body-bg);
+    }
+    .container-narrow {
+      max-width: 900px;
+    }
+    .section-card {
+      margin-bottom: var(--section-gap);
+      border: 1px solid var(--bs-border-color);
+    }
+    .section-card .card-header {
+      background: var(--bs-tertiary-bg);
+    }
+    .section-title {
+      font-weight: 600;
+    }
+    .muted {
+      color: var(--muted);
+    }
+    .sticky-actions {
+      position: sticky;
+      top: 0;
+      z-index: 1100;
+      background: var(--bs-body-bg);
+      border-bottom: 1px solid var(--bs-border-color);
+    }
+    .list-bullets li::marker {
+      color: var(--muted);
+    }
+    .small-help {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    /* Editable areas */
+    .editable {
+      min-height: 3rem;
+      padding: 0.75rem;
+      border: 1px dashed var(--bs-border-color);
+      border-radius: 0.5rem;
+      background: var(--bs-body-bg);
+    }
+    .editable:focus {
+      outline: 2px solid var(--bs-primary);
+      outline-offset: 2px;
+    }
+
+    /* Checklist pills */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--bs-border-color);
+      background: var(--bs-tertiary-bg);
+      font-size: 0.9rem;
+      margin: 0.25rem 0.25rem 0 0;
+    }
+
+    /* Print styles (clean PDF export) */
+    @media print {
+      .sticky-actions,
+      .collapse-toggle,
+      .btn,
+      .form-check,
+      .navbar {
+        display: none !important;
+      }
+      .card {
+        box-shadow: none !important;
+      }
+      .editable {
+        border: 1px solid #ccc;
+      }
+      body {
+        background: white !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sticky Actions -->
+  <div class="sticky-actions py-2">
+    <div class="container container-narrow d-flex align-items-center gap-2">
+      <button id="toggleTheme" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-brightness-alt-high"></i> Toggle Theme
+      </button>
+      <button onclick="window.print()" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-printer"></i> Print / Export PDF
+      </button>
+      <button id="clearAll" class="btn btn-outline-danger btn-sm">
+        <i class="bi bi-trash"></i> Clear All
+      </button>
+      <div class="ms-auto small-help">
+        Tip: Write fast. No grammar. Externalize everything.
+      </div>
+    </div>
+  </div>
+
+  <main class="container container-narrow my-4">
+    <!-- Header -->
+    <header class="mb-4">
+      <h1 class="h3">🧠 Brain Externalization Template</h1>
+      <p class="muted mb-1">Dump everything out → structure → choose one small safe step.</p>
+      <div class="d-flex gap-2">
+        <input id="featureTitle" type="text" class="form-control form-control-sm"
+               placeholder="Feature / Problem title (e.g., Recurring Payments)">
+        <input id="timestamp" type="text" class="form-control form-control-sm"
+               placeholder="Session timestamp">
+      </div>
+    </header>
+
+    <!-- 1. Problem Snapshot -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">1) Problem Snapshot (2–5 minutes)</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#snap">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="snap" class="card-body collapse show">
+        <label class="form-label">What is the problem in plain language?</label>
+        <div class="editable" contenteditable="true" data-placeholder="Users need X, but we only support Y."></div>
+        <label class="form-label mt-3">Why does this matter? (Business / UX / Technical)</label>
+        <div class="editable" contenteditable="true" data-placeholder="Because... affects revenue, UX, reliability, etc."></div>
+      </div>
+    </section>
+
+    <!-- 2. What I Know -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">2) What I Know For Sure ✅</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#known">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="known" class="card-body collapse show">
+        <ul id="knownList" class="list-group mb-3"></ul>
+        <div class="input-group">
+          <input id="knownInput" type="text" class="form-control" placeholder="Add a fact (no opinions)">
+          <button class="btn btn-outline-success" id="knownAdd"><i class="bi bi-plus-lg"></i> Add</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Unknowns -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">3) What I Don’t Know / Am Unsure About ❓</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#unknowns">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="unknowns" class="card-body collapse show">
+        <ul id="unknownList" class="list-group mb-3"></ul>
+        <div class="input-group">
+          <input id="unknownInput" type="text" class="form-control" placeholder="Add an unknown or question">
+          <button class="btn btn-outline-warning" id="unknownAdd"><i class="bi bi-plus-lg"></i> Add</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Constraints -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">4) Constraints (Hard Walls)</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#constraints">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="constraints" class="card-body collapse show">
+        <ul id="constraintsList" class="list-group mb-3"></ul>
+        <div class="input-group">
+          <input id="constraintsInput" type="text" class="form-control" placeholder="Add a constraint (non-negotiable)">
+          <button class="btn btn-outline-dark" id="constraintsAdd"><i class="bi bi-plus-lg"></i> Add</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Invariants -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">5) Invariants (Must Always Be True)</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#invariants">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="invariants" class="card-body collapse show">
+        <div class="editable" contenteditable="true" data-placeholder="- State transitions, idempotency, safety guarantees..."></div>
+        <p class="small-help mt-2">If an invariant breaks, the system is wrong. Capture safety properties here.</p>
+      </div>
+    </section>
+
+    <!-- 6. Inputs -> Outputs -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">6) Inputs → Outputs (Boundary Thinking)</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#io">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="io" class="card-body collapse show">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Inputs</label>
+            <div class="editable" contenteditable="true" data-placeholder="- User ID, payload, schedule..."></div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Outputs</label>
+            <div class="editable" contenteditable="true" data-placeholder="- Created resource, result, status..."></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Happy Path -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">7) Happy Path (Ideal Flow)</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#happy">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="happy" class="card-body collapse show">
+        <ol id="happyList" class="list-group list-group-numbered mb-3"></ol>
+        <div class="input-group">
+          <input id="happyInput" type="text" class="form-control" placeholder="Add next step in the ideal flow">
+          <button class="btn btn-outline-primary" id="happyAdd"><i class="bi bi-plus-lg"></i> Add</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Things That Can Go Wrong -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">8) Things That Can Go Wrong 💥</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#failures">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="failures" class="card-body collapse show">
+        <ul id="failList" class="list-group mb-3"></ul>
+        <div class="input-group">
+          <input id="failInput" type="text" class="form-control" placeholder="Add a failure mode (no analysis yet)">
+          <button class="btn btn-outline-danger" id="failAdd"><i class="bi bi-plus-lg"></i> Add</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Decomposition -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">9) Decomposition (Divide Until Boring)</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#decompose">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="decompose" class="card-body collapse show">
+        <div class="editable" contenteditable="true" data-placeholder="- Break into chunks: validation, persistence, execution, callbacks..."></div>
+        <p class="small-help mt-2">If any item feels scary → split again.</p>
+      </div>
+    </section>
+
+    <!-- 10. First Small Safe Step -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">10) My First Small Safe Step 🏁</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#firststep">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="firststep" class="card-body collapse show">
+        <div class="editable" contenteditable="true" data-placeholder="- Pick ONE action for the next 30–60 minutes..."></div>
+      </div>
+    </section>
+
+    <!-- 11. Parking Lot -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">11) Parking Lot (Intentional Deferral)</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#parking">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="parking" class="card-body collapse show">
+        <ul id="parkList" class="list-group mb-3"></ul>
+        <div class="input-group">
+          <input id="parkInput" type="text" class="form-control" placeholder="Add something you won’t solve now">
+          <button class="btn btn-outline-secondary" id="parkAdd"><i class="bi bi-plus-lg"></i> Add</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. Confidence Check -->
+    <section class="card section-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="section-title">12) Confidence Check (1 sentence)</span>
+        <button class="btn btn-sm btn-outline-secondary collapse-toggle" data-bs-toggle="collapse" data-bs-target="#confidence">
+          <i class="bi bi-arrows-collapse"></i>
+        </button>
+      </div>
+      <div id="confidence" class="card-body collapse show">
+        <div class="editable" contenteditable="true" data-placeholder="What do I understand better now than 20 minutes ago?"></div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-4 text-center text-muted">
+      <small>Built for rapid clarity. Write fast, decide one small step, iterate.</small>
+    </footer>
+  </main>
+
+  <!-- Bootstrap JS -->
+  <script
+
+
+    function addItem(listId, text) {
+      if (!text) return;
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-center';
+      li.innerHTML = ` <span>${escapeHtml(text)}</span> <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></button> `;
+      li.querySelector('button').addEventListener('click', () => li.remove());
+      document.getElementById(listId).appendChild(li);
+    }
+
+    function escapeHtml(str) {
+      const p = document.createElement('p');
+      p.innerText = str;
+      return p.innerHTML;
+    }
+
+    // Hook up add buttons
+    const pairs = [
+      ['knownInput', 'knownAdd', 'knownList'],
+      ['unknownInput', 'unknownAdd', 'unknownList'],
+      ['constraintsInput', 'constraintsAdd', 'constraintsList'],
+      ['happyInput', 'happyAdd', 'happyList'],
+      ['failInput', 'failAdd', 'failList'],
+      ['parkInput', 'parkAdd', 'parkList'],
+    ];
+    pairs.forEach(([inputId, btnId, listId]) => {
+      const input = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      btn.addEventListener('click', () => {
+        addItem(listId, input.value.trim());
+        input.value = '';
+        input.focus();
+      });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+    });
+
+    // Contenteditable placeholders
+    document.querySelectorAll('.editable').forEach(el => {
+      const placeholder = el.dataset.placeholder || '';
+      const setPlaceholder = () => {
+        if (!el.innerText.trim()) {
+          el.classList.add('text-muted');
+          el.innerText = placeholder;
+        }
+      };
+      const clearPlaceholder = () => {
+        if (el.innerText.trim() === placeholder) {
+          el.innerText = '';
+        }
+        el.classList.remove('text-muted');
+      };
+      el.addEventListener('focus', clearPlaceholder);
+      el.addEventListener('blur', setPlaceholder);
+      setPlaceholder();
+    });
+
+    // Theme toggle (Bootstrap 5.3 data-bs-theme)
+    document.getElementById('toggleTheme').addEventListener('click', () => {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-bs-theme') || 'light';
+      html.setAttribute('data-bs-theme', current === 'light' ? 'dark' : 'light');
+    });
+
+    // Timestamp default
+    const ts = document.getElementById('timestamp');
+    ts.value = new Date().toLocaleString();
+
+    // Clear all content
+    document.getElementById('clearAll').addEventListener('click', () => {
+      if (!confirm('Clear all notes? This cannot be undone.')) return;
+
+      // Clear lists
+      ['knownList','unknownList','constraintsList','happyList','failList','parkList']
+        .forEach(id => document.getElementById(id).innerHTML = '');
+
+      // Clear editable areas
+      document.querySelectorAll('.editable').forEach(el => {
+        el.innerText = '';
+        el.dispatchEvent(new Event('blur'));
+      });
+
+      // Clear inputs
+      document.querySelectorAll('input[type="text"]').forEach(i => {
+        if (i.id === 'timestamp') {
+          i.value = new Date().toLocaleString();
+        } else {
+          i.value = '';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
