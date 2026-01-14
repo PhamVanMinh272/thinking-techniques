@@ -1,0 +1,751 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Software RCA & Quality Template</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap 5 CSS (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --brand: #0d6efd;
+      --muted: #6c757d;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: #212529;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-w
+      eight: 600;
+    }
+
+    .section-title {
+      border-left: 4px solid var(--brand);
+      padding-left: .5rem;
+      margin-bottom: .75rem;
+    }
+
+    .card {
+      box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.12);
+    }
+
+    .form-help {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .badge-pill {
+      border-radius: 50rem;
+      padding: .5rem .75rem;
+    }
+
+    .small-label {
+      font-size: .9rem;
+      color: var(--muted);
+    }
+
+    .sticky-actions {
+      position: sticky;
+      bottom: 0;
+      background: #ffffffcc;
+      backdrop-filter: blur(3px);
+      border-top: 1px solid #dee2e6;
+      padding: .75rem;
+      z-index: 50;
+    }
+
+    /* Print styles */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      .card {
+        box-shadow: none !important;
+        border: 1px solid #ddd;
+      }
+      body {
+        background: #fff;
+      }
+      /* Force page breaks before large sections if needed */
+      .page-break {
+        page-break-before: always;
+      }
+    }
+
+    /* Text preview area */
+    #textPreview {
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: #f1f3f5;
+      border: 1px solid #dee2e6;
+      border-radius: .5rem;
+      padding: .75rem;
+      max-height: 40vh;
+      overflow: auto;
+    }
+
+    /* Subtle divider */
+    .divider {
+      height: 1px;
+      background: #e9ecef;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom mb-3 no-print">
+    <div class="container">
+      #RCA & Quality Template</a>
+      <div class="ms-auto d-flex gap-2">
+        <button class="btn btn-outline-secondary btn-sm" id="loadSampleBtn">Load Sample</button>
+        <button class="btn btn-outline-danger btn-sm" id="resetFormBtn">Reset</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container pb-5">
+    <!-- Summary -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="section-title">1) Incident Summary</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Incident Title</label>
+            <input type="text" class="form-control" id="title" placeholder="e.g., API 5xx spike after deployment">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Severity</label>
+            <select class="form-select" id="severity">
+              <option value="">Select</option>
+              <option>SEV-1</option>
+              <option>SEV-2</option>
+              <option>SEV-3</option>
+              <option>SEV-4</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Blast Radius</label>
+            <select class="form-select" id="blastRadius">
+              <option value="">Select</option>
+              <option>Single user</option>
+              <option>Segment / region</option>
+              <option>Single service</option>
+              <option>Multi-service</option>
+              <option>Global</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Start Time (UTC)</label>
+            <input type="datetime-local" class="form-control" id="startTime">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">End Time (UTC)</label>
+            <input type="datetime-local" class="form-control" id="endTime">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Symptom</label>
+            <textarea class="form-control" id="symptom" rows="2"
+              placeholder="What did users experience? Where/when? Include metrics or error codes."></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Definition of Done (for RCA)</label>
+            <textarea class="form-control" id="dod" rows="2"
+              placeholder="What proof ends the RCA? e.g., validated root cause with logs/metrics + fix canaried."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="section-title">2) Timeline (UTC)</h5>
+        <p class="form-help">List key events: deploy, config change, traffic peaks, alerts, mitigation steps.</p>
+        <textarea class="form-control" id="timeline" rows="4"
+          placeholder="14:03 – Deploy v1.2.3 to prod
+14:07 – Error rate spikes (5xx p95)
+14:09 – Rollback initiated
+14:12 – Errors subside"></textarea>
+
+        <div class="divider"></div>
+
+        <div class="row g-3">
+          <div class="col-md-12">
+            <label class="form-label">Changes Compared to Last Known Good</label>
+            <div class="row g-2">
+              <div class="col-md-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="changeCode">
+                  <label class="form-check-label" for="changeCode">Code / Binary</label>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="changeConfig">
+                  <label class="form-check-label" for="changeConfig">Config / Feature Flags</label>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="changeInfra">
+                  <label class="form-check-label" for="changeInfra">Infra / OS / Node</label>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="changeDependency">
+                  <label class="form-check-label" for="changeDependency">Library / DB / API</label>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="changeData">
+                  <label class="form-check-label" for="changeData">Data / Schema / Migration</label>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="changeTraffic">
+                  <label class="form-check-label" for="changeTraffic">Traffic / Workload shape</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Observability & Signals -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="section-title">3) Observability & Signals</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Golden Signals observed</label>
+            <div class="row g-2">
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="sigLatency">
+                  <label class="form-check-label" for="sigLatency">Latency spike (p95/p99)</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="sigErrors">
+                  <label class="form-check-label" for="sigErrors">Error rate increase (4xx/5xx)</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="sigSaturation">
+                  <label class="form-check-label" for="sigSaturation">Saturation (CPU/mem/I/O/queues)</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="sigTraffic">
+                  <label class="form-check-label" for="sigTraffic">Traffic anomaly</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Observability Capabilities</label>
+            <div class="row g-2">
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="obsLogs">
+                  <label class="form-check-label" for="obsLogs">Structured JSON logs</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="obsCorrId">
+                  <label class="form-check-label" for="obsCorrId">Correlation IDs propagated</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="obsMetrics">
+                  <label class="form-check-label" for="obsMetrics">RED metrics per endpoint</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="obsTracing">
+                  <label class="form-check-label" for="obsTracing">Distributed tracing</label>
+                </div>
+              </div>
+            </div>
+            <p class="form-help mt-2">Unchecked items will trigger to-do suggestions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hypotheses & Tests -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="section-title">4) Hypotheses & Discriminating Tests</h5>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Top Hypotheses (MECE)</label>
+            <textarea class="form-control" id="hypotheses" rows="3"
+              placeholder="- Regression in auth service
+- Config drift on cache TTL
+- DB connection pool saturation
+- Data skew from new client"></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Discriminating Tests</label>
+            <textarea class="form-control" id="tests" rows="3"
+              placeholder="Git bisect; canary disable flag; replay failing requests; trace slow spans; limit concurrency."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 Whys -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="section-title">5) Root Cause (5 Whys)</h5>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Why #1</label><input type="text" class="form-control" id="why1"></div>
+          <div class="col-md-6"><label class="form-label">Why #2</label><input type="text" class="form-control" id="why2"></div>
+          <div class="col-md-6"><label class="form-label">Why #3</label><input type="text" class="form-control" id="why3"></div>
+          <div class="col-md-6"><label class="form-label">Why #4</label><input type="text" class="form-control" id="why4"></div>
+          <div class="col-md-12"><label class="form-label">Why #5 (Systemic Cause)</label><input type="text" class="form-control" id="why5"></div>
+          <div class="col-12"><label class="form-label">Root Cause Statement</label>
+            <textarea class="form-control" id="rootCause" rows="3"
+              placeholder="State the specific cause validated by evidence (logs/metrics/traces) and causal chain."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="section-title">6) Actions</h5>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Immediate Corrective Fix</label>
+            <textarea class="form-control" id="corrective" rows="2"
+              placeholder="What fixed the issue now? (rollback, patch, config change, scaling, etc.)"></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Preventive Actions (CAPA)</label>
+            <textarea class="form-control" id="preventive" rows="3"
+              placeholder="What will prevent recurrence? tests, guardrails, reviews, observability, SLO updates, automation…"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contributing Factors -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="section-title">7) Contributing Factors (categorize)</h5>
+        <p class="form-help">Select all that apply; used to generate targeted to-dos.</p>
+        <div class="row g-2">
+          <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="cfCode"><label class="form-check-label" for="cfCode">Code</label></div></div>
+          <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="cfConfig"><label class="form-check-label" for="cfConfig">Config / Flags</label></div></div>
+          <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="cfInfra"><label class="form-check-label" for="cfInfra">Infra / OS / Node</label></div></div>
+          <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="cfData"><label class="form-check-label" for="cfData">Data / Schema</label></div></div>
+          <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="cfDependency"><label class="form-check-label" for="cfDependency">Dependency / Library</label></div></div>
+          <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="cfProcess"><label class="form-check-label" for="cfProcess">Process / Review / Deploy</label></div></div>
+          <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="cfMonitoring"><label class="form-check-label" for="cfMonitoring">Monitoring / Alerts</label></div></div>
+          <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="cfSecurity"><label class="form-check-label" for="cfSecurity">Security / Compliance</label></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Output & Actions -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="section-title">8) Auto-Generated To-Do & Exports</h5>
+        <div class="row g-3">
+          <div class="col-md-6 d-grid gap-2 no-print">
+            <button class="btn btn-primary" id="generateTodosBtn">Generate To-Do Suggestions</button>
+            <button class="btn btn-outline-primary" id="previewTextBtn">Preview Text Summary</button>
+            <button class="btn btn-outline-success" id="copyTextBtn">Copy Text</button>
+            <button class="btn btn-outline-secondary" id="downloadTextBtn">Download .txt</button>
+            <button class="btn btn-danger" id="exportPdfBtn">Export PDF</button>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Suggested To-Do List (based on your answers)</label>
+            <ul id="todoList" class="list-group"></ul>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Text Preview (for copy/paste)</label>
+            <div id="textPreview"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="sticky-actions no-print">
+      <div class="container d-flex flex-wrap gap-2 justify-content-end">
+        <button class="btn btn-primary" id="generateTodosBtnFooter">Generate To-Do</button>
+        <button class="btn btn-outline-primary" id="previewTextBtnFooter">Preview Text</button>
+        <button class="btn btn-outline-success" id="copyTextBtnFooter">Copy Text</button>
+        <button class="btn btn-outline-secondary" id="downloadTextBtnFooter">Download .txt</button>
+        <button class="btn btn-danger" id="exportPdfBtnFooter">Export PDF</button>
+      </div>
+    </div>
+  </main>
+  <script>
+       // Utility helpers
+    const val = id => document.getElementById(id)?.value?.trim() || '';
+    const checked = id => document.getElementById(id)?.checked || false;
+    const setTextPreview = text => { document.getElementById('textPreview').textContent = text; };
+    const todoListEl = document.getElementById('todoList');
+
+    function addTodo(text) {
+      const li = document.createElement('li');
+      li.className = 'list-group-item';
+      li.textContent = text;
+      todoListEl.appendChild(li);
+    }
+
+    function resetTodos() {
+      todoListEl.innerHTML = '';
+    }
+
+    // Rule-based suggestions derived from inputs
+    function generateTodos() {
+      resetTodos();
+
+      // Severity & blast radius
+      const sev = val('severity');
+      const blast = val('blastRadius');
+      if (sev === 'SEV-1' || sev === 'SEV-2') {
+        addTodo('Schedule blameless postmortem within 48 hours; assign CAPA owners & deadlines.');
+        addTodo('Audit alert runbooks for clarity; test on-call drills.');
+      }
+      if (blast === 'Multi-service' || blast === 'Global') {
+        addTodo('Introduce bulkheads & circuit breakers to limit cross-service blast radius.');
+        addTodo('Implement canary/blue-green deployments for high-risk changes.');
+      }
+
+      // Changes compared to last good
+      if (checked('changeConfig')) {
+        addTodo('Add config drift detection & pre-deploy diff checks; version flags with safe defaults.');
+        addTodo('Gate risky configs behind kill-switch flags; add validation schemas.');
+      }
+      if (checked('changeDependency')) {
+        addTodo('Pin dependency versions; enable SBOM & CVE scanning in CI.');
+        addTodo('Add provider/consumer contract tests before upgrades; canary library updates.');
+      }
+      if (checked('changeInfra')) {
+        addTodo('Document infra change windows; add capacity & quota alerts.');
+        addTodo('Create infra rollback playbook with health checks.');
+      }
+      if (checked('changeData')) {
+        addTodo('Validate data schemas & ranges; add referential integrity checks.');
+        addTodo('Add distribution/cardinality metrics to detect data skew early.');
+      }
+      if (checked('changeTraffic')) {
+        addTodo('Enable autoscaling with backpressure; rate-limit abusive clients.');
+        addTodo('Simulate peak workloads in pre-prod with chaos/traffic replay.');
+      }
+
+      // Observability gaps (unchecked items)
+      if (!checked('obsCorrId')) addTodo('Propagate correlation IDs across all service boundaries; log req_id in every hop.');
+      if (!checked('obsLogs')) addTodo('Adopt structured JSON logging with consistent fields & log levels.');
+      if (!checked('obsMetrics')) addTodo('Instrument RED metrics per endpoint (rate, errors, duration) with histograms.');
+      if (!checked('obsTracing')) addTodo('Enable distributed tracing; trace DB/cache/external calls with spans.');
+
+      // Signals
+      if (checked('sigLatency')) {
+        addTodo('Add p95/p99 latency SLOs & alerts; profile hotspots & slow queries.');
+        addTodo('Introduce timeouts and client-side retries with jitter; review connection pools.');
+      }
+      if (checked('sigErrors')) {
+        addTodo('Implement error budget policy; add semantic error codes & improve error handling.');
+        addTodo('Add synthetic monitoring for critical paths to catch regressions faster.');
+      }
+      if (checked('sigSaturation')) {
+        addTodo('Introduce backpressure & bounded queues; tune thread/pool sizes.');
+        addTodo('Add autoscaling policies; perform capacity planning & load tests.');
+      }
+      if (checked('sigTraffic')) {
+        addTodo('Analyze workload shape; cache hot keys; implement rate limiting & quotas.');
+      }
+
+      // Contributing factors
+      if (checked('cfCode')) {
+        addTodo('Increase unit/contract/property-based tests on edge cases; consider mutation testing.');
+      }
+      if (checked('cfConfig')) {
+        addTodo('Centralize config management; add schema validation & default safeguards.');
+      }
+      if (checked('cfInfra')) {
+        addTodo('Add node health probes; monitor I/O wait, GC pauses, and run queue length.');
+      }
+      if (checked('cfData')) {
+        addTodo('Add data quality checks; build guardrails for extreme cardinality and nullability.');
+      }
+      if (checked('cfDependency')) {
+        addTodo('Introduce dependency update playbook with canary & rollback; track breaking changes.');
+      }
+      if (checked('cfProcess')) {
+        addTodo('Adopt pre-deploy checklists; enforce ADRs with trade-off analysis for risky changes.');
+      }
+      if (checked('cfMonitoring')) {
+        addTodo('Refine SLI/SLOs; remove noisy alerts; ensure runbooks are actionable.');
+      }
+      if (checked('cfSecurity')) {
+        addTodo('Add security scans & policy checks to CI; verify secrets rotation/versioning.');
+      }
+
+      // Keyword-based suggestions from root cause text
+      const rc = val('rootCause').toLowerCase();
+      const keywords = [
+        { k: 'race', t: 'Add concurrency tests & deterministic scheduling in CI; review locking & atomicity.' },
+        { k: 'deadlock', t: 'Implement timeouts, lock ordering policies, and deadlock detection logging.' },
+        { k: 'timeout', t: 'Tune timeouts; add retries with exponential backoff + jitter; isolate slow dependencies.' },
+        { k: 'retry', t: 'Ensure idempotency; add deduplication keys; cap retries with circuit breakers.' },
+        { k: 'memory', t: 'Add heap profiling & leak detection; bound queues; tune GC and object lifetimes.' },
+        { k: 'cpu', t: 'Profile hot paths; vectorize or cache; adjust thread pools and affinity.' },
+        { k: 'config', t: 'Validate config on startup; enforce schema & defaults; add safe toggles.' },
+        { k: 'schema', t: 'Strengthen migration testing; version schemas; add backward compatibility tests.' },
+        { k: 'cache', t: 'Monitor cache hit ratio; guard against stampedes with per-key locks & jitter.' },
+        { k: 'pool', t: 'Tune connection pools; add circuit breakers for exhaustion; observe wait times.' },
+        { k: 'queue', t: 'Bound queues; monitor backlog/age; implement backpressure from consumers.' },
+        { k: 'dns', t: 'Cache DNS cautiously; add timeouts; handle resolver failures gracefully.' }
+      ];
+      keywords.forEach(({k, t}) => { if (rc.includes(k)) addTodo(t); });
+
+      if (!todoListEl.children.length) {
+        addTodo('No specific suggestions generated. Ensure observability boxes reflect reality and add root-cause keywords.');
+      }
+    }
+
+    // Build a text summary (plain text) that includes all sections
+    function buildTextSummary() {
+      const lines = [];
+      lines.push(`# Incident RCA – ${val('title') || '(untitled)'}`);
+      lines.push('');
+      lines.push(`Severity: ${val('severity') || 'N/A'}`);
+      lines.push(`Blast Radius: ${val('blastRadius') || 'N/A'}`);
+      lines.push(`Start Time (UTC): ${val('startTime') || 'N/A'}`);
+      lines.push(`End Time (UTC): ${val('endTime') || 'N/A'}`);
+      lines.push('');
+      lines.push('## Symptom');
+      lines.push(val('symptom') || 'N/A');
+      lines.push('');
+      lines.push('## Definition of Done (RCA)');
+      lines.push(val('dod') || 'N/A');
+      lines.push('');
+      lines.push('## Timeline');
+      lines.push(val('timeline') || 'N/A');
+      lines.push('');
+      lines.push('## Changes vs Last Known Good');
+      const changes = [];
+      if (checked('changeCode')) changes.push('- Code/Binary');
+      if (checked('changeConfig')) changes.push('- Config/Flags');
+      if (checked('changeInfra')) changes.push('- Infra/OS/Node');
+      if (checked('changeDependency')) changes.push('- Dependency/Library/DB/API');
+      if (checked('changeData')) changes.push('- Data/Schema/Migration');
+      if (checked('changeTraffic')) changes.push('- Traffic/Workload shape');
+      lines.push(changes.length ? changes.join('\n') : 'N/A');
+      lines.push('');
+      lines.push('## Observability & Signals');
+      const signals = [];
+      if (checked('sigLatency')) signals.push('- Latency spike');
+      if (checked('sigErrors')) signals.push('- Error rate increase');
+      if (checked('sigSaturation')) signals.push('- Saturation');
+      if (checked('sigTraffic')) signals.push('- Traffic anomaly');
+      lines.push(signals.length ? signals.join('\n') : 'N/A');
+      lines.push('');
+      const obs = [];
+      obs.push(`Structured JSON logs: ${checked('obsLogs') ? 'Yes' : 'No'}`);
+      obs.push(`Correlation IDs propagated: ${checked('obsCorrId') ? 'Yes' : 'No'}`);
+      obs.push(`RED metrics per endpoint: ${checked('obsMetrics') ? 'Yes' : 'No'}`);
+      obs.push(`Distributed tracing: ${checked('obsTracing') ? 'Yes' : 'No'}`);
+      lines.push(obs.join('\n'));
+      lines.push('');
+      lines.push('## Hypotheses');
+      lines.push(val('hypotheses') || 'N/A');
+      lines.push('');
+      lines.push('## Discriminating Tests');
+      lines.push(val('tests') || 'N/A');
+      lines.push('');
+      lines.push('## Root Cause (5 Whys)');
+      [['Why #1', 'why1'], ['Why #2', 'why2'], ['Why #3', 'why3'], ['Why #4', 'why4'], ['Why #5', 'why5']].forEach(([label, id]) => {
+        lines.push(`${label}: ${val(id) || 'N/A'}`);
+      });
+      lines.push('');
+      lines.push('## Root Cause Statement');
+      lines.push(val('rootCause') || 'N/A');
+      lines.push('');
+      lines.push('## Actions');
+      lines.push('Corrective Fix:');
+      lines.push(val('corrective') || 'N/A');
+      lines.push('');
+      lines.push('Preventive Actions (CAPA):');
+      lines.push(val('preventive') || 'N/A');
+      lines.push('');
+      lines.push('## Contributing Factors');
+      const cf = [];
+      if (checked('cfCode')) cf.push('- Code');
+      if (checked('cfConfig')) cf.push('- Config/Flags');
+      if (checked('cfInfra')) cf.push('- Infra/OS/Node');
+      if (checked('cfData')) cf.push('- Data/Schema');
+      if (checked('cfDependency')) cf.push('- Dependency/Library');
+      if (checked('cfProcess')) cf.push('- Process/Review/Deploy');
+      if (checked('cfMonitoring')) cf.push('- Monitoring/Alerts');
+      if (checked('cfSecurity')) cf.push('- Security/Compliance');
+      lines.push(cf.length ? cf.join('\n') : 'N/A');
+      lines.push('');
+      lines.push('## Suggested To-Do');
+      const todos = Array.from(todoListEl.children).map(li => `- ${li.textContent}`);
+      lines.push(todos.length ? todos.join('\n') : 'No suggestions yet. Click "Generate To-Do Suggestions".');
+
+      return lines.join('\n');
+    }
+
+    // Text actions
+    function previewText() {
+      const text = buildTextSummary();
+      setTextPreview(text);
+      // Scroll preview into view
+      document.getElementById('textPreview').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    async function copyText() {
+      const text = buildTextSummary();
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('Text copied to clipboard.');
+      } catch (e) {
+        // Fallback: show preview if clipboard not available
+        setTextPreview(text);
+        alert('Clipboard unavailable. Text is shown in Preview—please select and copy manually.');
+      }
+    }
+
+    function downloadText() {
+      const text = buildTextSummary();
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const filename = (val('title') || 'incident-rca').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+      a.download = `${filename || 'incident-rca'}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportPdf() {
+      // Use native print; user chooses "Save as PDF"
+      window.print();
+    }
+
+    // Sample loader & reset
+    function loadSample() {
+      document.getElementById('title').value = 'API 5xx spike after deployment v1.2.3';
+      document.getElementById('severity').value = 'SEV-2';
+      document.getElementById('blastRadius').value = 'Single service';
+      document.getElementById('startTime').value = '2026-01-12T14:03';
+      document.getElementById('endTime').value = '2026-01-12T14:20';
+      document.getElementById('symptom').value = 'Users intermittently received 5xx on /orders; p99 latency rose from 450ms to 2.8s.';
+      document.getElementById('dod').value = 'Validated root cause with logs/traces; patch deployed; canary healthy; RED metrics back to baseline.';
+      document.getElementById('timeline').value = `14:03 – Deploy v1.2.3 to prod
+14:07 – Error rate spikes (5xx p95)
+14:09 – Rollback initiated
+14:12 – Errors subside`;
+
+      document.getElementById('changeCode').checked = true;
+      document.getElementById('changeConfig').checked = true;
+      document.getElementById('changeDependency').checked = false;
+      document.getElementById('changeInfra').checked = false;
+      document.getElementById('changeData').checked = false;
+      document.getElementById('changeTraffic').checked = true;
+
+      document.getElementById('sigLatency').checked = true;
+      document.getElementById('sigErrors').checked = true;
+      document.getElementById('sigSaturation').checked = true;
+      document.getElementById('sigTraffic').checked = false;
+
+      document.getElementById('obsLogs').checked = true;
+      document.getElementById('obsCorrId').checked = false;
+      document.getElementById('obsMetrics').checked = true;
+      document.getElementById('obsTracing').checked = false;
+
+      document.getElementById('hypotheses').value = `- Regression in order handler
+- Config drift on cache TTL
+- DB pool saturation under peak traffic`;
+      document.getElementById('tests').value = 'Disable cache TTL change via flag; replay failing requests; trace slow spans; limit concurrency and observe saturation.';
+      document.getElementById('why1').value = 'Deploy introduced slower DB queries';
+      document.getElementById('why2').value = 'Cache TTL lowered increased cache misses';
+      document.getElementById('why3').value = 'Higher DB load caused pool exhaustion';
+      document.getElementById('why4').value = 'Timeouts triggered retries, amplifying load';
+      document.getElementById('why5').value = 'Lack of idempotency & improper timeouts/circuit breakers allowed retry storms';
+      document.getElementById('rootCause').value = 'Retry storm due to lowered cache TTL + insufficient circuit breakers; DB pool ran out causing timeouts and 5xx.';
+      document.getElementById('corrective').value = 'Rollback cache TTL; increase DB pool; add temporary rate limits on /orders.';
+      document.getElementById('preventive').value = 'Add idempotency, circuit breakers, backoff with jitter; instrument RED metrics; canary for config changes.';
+
+      document.getElementById('cfCode').checked = true;
+      document.getElementById('cfConfig').checked = true;
+      document.getElementById('cfInfra').checked = false;
+      document.getElementById('cfData').checked = false;
+      document.getElementById('cfDependency').checked = false;
+      document.getElementById('cfProcess').checked = true;
+      document.getElementById('cfMonitoring').checked = true;
+      document.getElementById('cfSecurity').checked = false;
+
+      generateTodos();
+      previewText();
+    }
+
+    function resetForm() {
+      document.querySelectorAll('input, textarea, select').forEach(el => {
+        if (el.type === 'checkbox' || el.type === 'radio') {
+          el.checked = false;
+        } else {
+          el.value = '';
+        }
+      });
+      resetTodos();
+      setTextPreview('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Event bindings
+    document.getElementById('generateTodosBtn').addEventListener('click', generateTodos);
+    document.getElementById('generateTodosBtnFooter').addEventListener('click', generateTodos);
+
+    document.getElementById('previewTextBtn').addEventListener('click', previewText);
+    document.getElementById('previewTextBtnFooter').addEventListener('click', previewText);
+
+    document.getElementById('copyTextBtn').addEventListener('click', copyText);
+    document.getElementById('copyTextBtnFooter').addEventListener('click', copyText);
+
+    document.getElementById('downloadTextBtn').addEventListener('click', downloadText);
+    document.getElementById('downloadTextBtnFooter').addEventListener('click', downloadText);
+
+    document.getElementById('exportPdfBtn').addEventListener('click', exportPdf);
+    document.getElementById('exportPdfBtnFooter').addEventListener('click', exportPdf);
+
+    document.getElementById('loadSampleBtn').addEventListener('click', loadSample);
+    document.getElementById('resetFormBtn').addEventListener('click', resetForm);
+  </script>
+</body>
+</html>

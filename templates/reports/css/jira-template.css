@@ -1,0 +1,27 @@
+
+/* General */
+.preview-card {
+  border: 1px solid #dcdfe4;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fff;
+}
+
+/* Template card styles (used in inline HTML too) */
+.template-wrap { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.5; }
+.card { border: 1px solid #dcdfe4; border-radius: 8px; padding: 16px; margin: 8px 0; background: #fff; }
+.card h2 { margin: 0 0 8px; font-size: 18px; }
+.sub { color: #56637a; font-size: 13px; margin-bottom: 8px; }
+.section-title { font-weight: 600; margin-top: 12px; }
+.kv { display: grid; grid-template-columns: 160px 1fr; gap: 6px 12px; margin: 8px 0; }
+.kv .k { color: #59687a; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; margin-right: 6px; border: 1px solid #c9d3e0; }
+.badge.red { background: #fee; color: #a33; border-color: #f3c3c3; }
+.badge.orange { background: #fff4e6; color: #a65; border-color: #ffd7a8; }
+.badge.blue { background: #e8f1ff; color: #257; border-color: #c7dcff; }
+.badge.green { background: #eaf8ea; color: #2d7; border-color: #c6efc6; }
+.code { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 6px; padding: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; white-space: pre-wrap; }
+.list { margin: 6px 0 0 18px; }
+.hr { border-top: 1px dashed #dcdfe4; margin: 12px 0; }
+.small { font-size: 12px; color: #778; }
+.tag { display: inline-block; background: #f1f5f9; border: 1px solid #d7dee7; color: #334; padding: 2px 6px; margin: 0 6px 6px 0; border-radius: 6px; font-size: 12px; }
